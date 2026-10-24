@@ -5,7 +5,7 @@ A modern, responsive, and feature-rich social media web application built with *
 ---
 
 ## 🚀 Live Demo & Preview
-- **Live Demo:** [https://social-app-ten-sigma.vercel.app/](#)
+- **Live Demo:** [https://social-app-ten-sigma.vercel.app/]
 
 ---
 
