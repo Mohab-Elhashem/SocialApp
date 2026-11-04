@@ -3,13 +3,53 @@ import { Container } from "@/components/shared/Container";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, Heart, MessageSquare, Share2, Bookmark } from "lucide-react";
-import type { Post } from "@/api/posts.api";
+import { deletePost } from "@/api/posts.api";
+import { jwtDecode } from "jwt-decode";
+import { useMutation } from "@tanstack/react-query";
+import useUpdatePosts from "@/hooks/useUpdatePosts";
+import { toast } from "sonner";
+import { UpdatePost } from "./UpdatePost";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import type { Post } from "@/types/post.types";
+import { FollowButton } from "@/components/FollowButton";
+import LikeButton from "@/components/LikeButton";
+import { BookmarkButton } from "@/components/BookmarkButton";
+
+export interface DecodedToken {
+    user: string
+    iat: number
+    exp: number
+    aud: string
+    iss: string
+}
+
 
 export default function PostCard({ post }: { post: Post }) {
-    const { user: { name, photo, username }, body, image: postImage, likesCount, commentsCount, sharesCount, bookmarked } = post
+    const [isOpen, setIsOpen] = useState(false)
+    const { user: { name, photo, username, _id: postCreateId }, body, id: postId, image: postImage, likesCount, commentsCount, sharesCount, bookmarked } = post
+
+    const { user: loggedUser } = jwtDecode<DecodedToken>(localStorage.getItem('token') || '');
+
+    function handleDelete() {
+        return deletePost(postId)
+    }
+
+    const updatePosts = useUpdatePosts()
+    const { mutate } = useMutation({
+        mutationFn: handleDelete,
+        onSuccess: () => {
+            updatePosts()
+            toast.success("Post deleted successfully! 🎉");
+        },
+        onError: (err) => {
+            console.log(err);
+
+        }
+    })
 
     return (
-        <Container className="max-w-xl mx-auto py-2">
+        <Container className="mx-auto py-3">
             <div className="bg-card text-card-foreground border border-border rounded-2xl p-4 sm:p-5 shadow-xs space-y-3 transition-all">
 
                 {/* Header */}
@@ -25,38 +65,45 @@ export default function PostCard({ post }: { post: Post }) {
                                 <span className="font-semibold text-sm text-foreground">{name}</span>
                                 <span className="text-xs text-muted-foreground">{username}</span>
                             </div>
-                            <span className="text-xs text-muted-foreground">{post.createdAt}</span>
+                            <span className="text-xs text-muted-foreground">{new Date(post.createdAt).toLocaleDateString()}</span>
                         </div>
                     </div>
 
-                    <DropdownMenu>
-                        <DropdownMenuTrigger
-                            render={
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                                    <Ellipsis className="w-4 h-4" />
-                                </Button>
-                            }
-                        />
-                        <DropdownMenuContent align="end">
-                            <DropdownMenuItem className="cursor-pointer">
-                                Update
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer text-destructive focus:text-destructive">
-                                Delete
-                            </DropdownMenuItem>
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    {loggedUser == postCreateId ?
+                        <DropdownMenu>
+                            <DropdownMenuTrigger
+                                render={
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                                        <Ellipsis className="w-4 h-4" />
+                                    </Button>
+                                }
+                            />
+                            <DropdownMenuContent align="end">
+                                <DropdownMenuItem onClick={() => setIsOpen(true)} className="cursor-pointer">
+                                    Update
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => mutate()} className="cursor-pointer text-destructive focus:text-destructive">
+                                    Delete
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+
+
+                        </DropdownMenu>
+                        :
+                        <FollowButton targetUserId={post.user?._id || postCreateId} />
+
+                    }
                 </header>
 
                 {/* Content */}
                 <p className="text-sm text-foreground leading-relaxed">{body}</p>
 
                 {/* Media Image */}
-                {postImage && <div className="rounded-xl overflow-hidden border border-border/60 bg-muted/30 max-h-87.5">
+                {postImage && <div className="rounded-xl overflow-hidden border border-border/60 bg-muted/30 max-h-87.5 flex items-center justify-center">
                     <img
                         src={postImage}
                         alt={body}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                     />
                 </div>}
 
@@ -64,25 +111,25 @@ export default function PostCard({ post }: { post: Post }) {
                 {/* Footer Actions */}
                 <footer className="flex items-center justify-between pt-2 border-t border-border/50 text-muted-foreground">
                     <div className="flex items-center gap-1">
-                        <Button variant="ghost" size="sm" className="flex items-center gap-1.5 hover:text-red-500 hover:bg-red-500/10">
-                            <Heart className="w-4 h-4" />
-                            <span className="text-xs font-medium">{likesCount}</span>
-                        </Button>
-                        <Button variant="ghost" size="sm" className="flex items-center gap-1.5 hover:text-primary hover:bg-primary/10">
-                            <MessageSquare className="w-4 h-4" />
-                            <span className="text-xs font-medium">{commentsCount}</span>
-                        </Button>
+                        <LikeButton
+                            postId={post._id}
+                            initialLikesCount={post.likesCount}
+                            likes={post.likes}
+                        />
+                        <Link to={`/comments/${postId}`}>
+                            <Button variant="ghost" size="sm" className="flex items-center gap-1.5 hover:text-primary hover:bg-primary/10">
+                                <MessageSquare className="w-4 h-4" />
+                                <span className="text-xs font-medium">{commentsCount}</span>
+                            </Button>
+                        </Link>
                     </div>
 
                     <div className="flex items-center gap-1">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className={`h-8 w-8 transition-colors ${bookmarked ? "text-primary bg-primary/10" : "text-muted-foreground hover:text-primary"
-                                }`}
-                        >
-                            <Bookmark className={`w-4 h-4 ${bookmarked ? "fill-current" : ""}`} />
-                        </Button>
+                        <BookmarkButton
+                            postId={post._id}
+                            initialBookmarksCount={post.bookmarksCount} // 👈 العداد (رقم)
+                            initialIsBookmarked={post.bookmarked ?? false}   // 👈 الحالة (True أو False)
+                        />
                         <Button variant="ghost" size="sm" className="flex items-center gap-1.5 hover:text-primary hover:bg-primary/10">
                             <Share2 className="w-4 h-4" />
                             <span className="text-xs font-medium">{sharesCount}</span>
@@ -90,6 +137,7 @@ export default function PostCard({ post }: { post: Post }) {
                     </div>
                 </footer>
             </div>
+            {loggedUser == postCreateId && <UpdatePost isOpen={isOpen} setIsOpen={setIsOpen} post={post} />}
         </Container>
     );
 }

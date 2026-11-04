@@ -42,7 +42,7 @@ export interface loginDataRequest {
 // signup function (send data)
 export async function signup(regData: regDataRequest) {
     const {data} = await api.post<authResponse>('/users/signup', regData) 
-    console.log(data);
+    // console.log(data);
 
     return data
 }
@@ -50,7 +50,7 @@ export async function signup(regData: regDataRequest) {
 // login(signin) function
 export async function login(loginData:loginDataRequest) {
     const {data} = await api.post<authResponse>('/users/signin',loginData)
-    console.log(data);
+    // console.log(data);
     
     return data
 } 

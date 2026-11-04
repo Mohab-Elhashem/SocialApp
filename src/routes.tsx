@@ -6,6 +6,7 @@ import AuthGard from "./gards/AuthGard"
 import PostsGuard from "./gards/PostsGuard"
 import ProfilePage from "./profile/pages/ProfilePage"
 import MainLayout from "./layout/MainLayout"
+import CommentsPage from "./features/comments/pages/CommentsPage"
 
 const routes = createBrowserRouter([
     {
@@ -15,6 +16,7 @@ const routes = createBrowserRouter([
             { path: '/register', element: <AuthGard><RegisterPage /></AuthGard> },
             { path: '/posts', element: <PostsGuard><PostsPage /></PostsGuard> },
             { path: '/profile', element: <PostsGuard><ProfilePage /></PostsGuard> },
+            { path: '/comments/:id', element: <PostsGuard><CommentsPage /></PostsGuard> },
         ]
     }
 

@@ -122,7 +122,7 @@ export default function RegisterForm() {
 
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background py-8 px-4 sm:px-6 transition-colors duration-300">
+        <div className="min-h-screen flex items-center justify-center py-8 px-4 sm:px-6 transition-colors duration-300">
             <Container>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 rounded-2xl border border-border bg-card shadow-2xl overflow-hidden">

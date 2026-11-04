@@ -69,7 +69,7 @@ export default function LoginForm() {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-background py-8 px-4 sm:px-6 transition-colors duration-300">
+        <div className="min-h-screen flex items-center justify-center py-8 px-4 sm:px-6 transition-colors duration-300">
             <Container className="max-w-md w-full">
                 <form onSubmit={handleSubmit(loginUser)} className="p-6 sm:p-10 bg-card border border-border rounded-2xl shadow-xl flex flex-col justify-center">
                     <FieldSet className="w-full">

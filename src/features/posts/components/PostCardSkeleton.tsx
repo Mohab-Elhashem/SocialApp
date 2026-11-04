@@ -2,8 +2,8 @@ import { Container } from "@/components/shared/Container";
 
 export default function PostCardSkeleton() {
     return <>
-        {Array.from({ length: 3 }).map((_,index) => <Container className="max-w-xl mx-auto py-2" key={index}>
-            <div className="bg-card text-card-foreground border border-border rounded-2xl p-4 sm:p-5 shadow-xs space-y-4 animate-pulse">
+        {Array.from({ length: 3 }).map((_,index) => <Container className="mx-auto py-3" key={index}>
+            <div className="bg-card text-card-foreground border border-border rounded-2xl p-4 sm:p-5 shadow-xs space-y-3 transition-all">
 
                 {/* Header Skeleton */}
                 <header className="flex justify-between items-center">

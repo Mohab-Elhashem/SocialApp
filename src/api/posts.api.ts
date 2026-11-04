@@ -1,32 +1,92 @@
+import type { AllPostsResponse, SinglePostResponse } from "@/types/post.types";
 import api from "./axios";
 
-export interface AllPostsResponse {
+
+export async function getAllPosts(page: number) {
+
+    const { data } = await api.get<AllPostsResponse>('/posts', {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+        params: {
+            limit: 10,
+            page,
+            sort: 'createdAt'
+        }
+    })
+    console.log(data, 'getAllPosts');
+
+    return data
+}
+
+export async function createPost(formData: FormData) {
+
+    const { data } = await api.post('/posts', formData, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+    })
+
+    return data
+}
+
+export async function deletePost(postId: string) {
+
+    const { data } = await api.delete(`/posts/${postId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+    })
+    // console.log(data, 'delete post');
+
+    return data
+}
+
+export async function updatePost(postId: string, formData: FormData) {
+
+    const { data } = await api.put(`/posts/${postId}`, formData, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+    })
+    // console.log(data, 'update post');
+
+    return data
+}
+
+export async function getSinglePost(postId: string) {
+    const { data } = await api.get<SinglePostResponse>(`/posts/${postId}`, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+    })
+    console.log(data, 'single post');
+    return data
+}
+
+export interface LikePostData {
     success: boolean
     message: string
     data: Data
-    meta: Meta
 }
 
 export interface Data {
-    posts: Post[]
+    liked: boolean
+    likesCount: number
+    post: Post
 }
 
 export interface Post {
     _id: string
-    image?: string
+    body: string
     privacy: string
     user: User
-    sharedPost?: SharedPost
+    sharedPost: unknown
     likes: string[]
     createdAt: string
-    body?: string
-    commentsCount: number
-    topComment?: TopComment
-    sharesCount: number
     likesCount: number
     isShare: boolean
     id: string
-    bookmarked: boolean
 }
 
 export interface User {
@@ -34,75 +94,41 @@ export interface User {
     name: string
     username: string
     photo: string
-}
-
-export interface SharedPost {
-    _id: string
-    body: string
-    privacy: string
-    user: User2
-    sharedPost: unknown
-    likes: unknown[]
-    createdAt: string
-    commentsCount: number
-    topComment: unknown
-    sharesCount: number
-    likesCount: number
-    isShare: boolean
+    followersCount: number
+    followingCount: number
+    bookmarksCount: number
     id: string
 }
 
-export interface User2 {
-    _id: string
-    name: string
-    username: string
-    photo: string
+// toggleBookmarkPost
+export interface BookmarkPostData {
+    success: boolean
+    message: string
+    data: Data
 }
 
-export interface TopComment {
-    _id: string
-    content: string
-    commentCreator: CommentCreator
-    post: string
-    parentComment: unknown
-    likes: unknown[]
-    createdAt: string
-    image?: string
-}
-
-export interface CommentCreator {
-    _id: string
-    name: string
-    username: string
-    photo: string
-}
-
-export interface Meta {
-    pagination: Pagination
-}
-
-export interface Pagination {
-    currentPage: number
-    numberOfPages: number
-    limit: number
-    nextPage: number
-    total: number
+export interface Data {
+    bookmarked: boolean
+    bookmarksCount: number
 }
 
 
-export async function getAllPosts() {
-
-    const { data } = await api.get<AllPostsResponse>('/posts',{
-        headers:{
-            Authorization:`Bearer ${localStorage.getItem('token')}`
+export async function toggleLikePost(postId: string) {
+    const { data } = await api.put<LikePostData>(`/posts/${postId}/like`, {}, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
         },
-        params:{
-            limit:10,
-            page:1,
-            sort:'createdAt'
-        }
     })
-    console.log(data);
+    console.log(data, 'toggleLikePost');
+    return data
+}
 
+export async function toggleBookmarkPost(postId: string) {
+    const { data } = await api.put<BookmarkPostData>(`/posts/${postId}/bookmark`, {}, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        },
+    })
+    console.log(data, 'toggleBookmarkPost');
     return data
 }
