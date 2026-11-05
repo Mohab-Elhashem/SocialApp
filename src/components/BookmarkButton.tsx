@@ -26,7 +26,7 @@ export function BookmarkButton({ postId, initialIsBookmarked = false }: Bookmark
 
             setIsBookmarkedLocal(nextBookmarked);
 
-            queryClient.invalidateQueries({ queryKey: ['posts'] });
+            queryClient.invalidateQueries({ queryKey: ['allPosts'] });
             queryClient.invalidateQueries({ queryKey: ['my-profile'] });
 
             toast.success(nextBookmarked ? "Post bookmarked successfully! 🔖" : "Post removed from bookmarks");
