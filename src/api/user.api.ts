@@ -1,5 +1,6 @@
 import type { FollowSuggestionsData, FollowUserResponse, ProfileData, UserPostsData } from "@/types/user.types";
 import api from "./axios"
+import type { ChangePasswordFormData } from "@/lib/changePassword";
 
 
 
@@ -10,7 +11,7 @@ export async function getUserProfile() {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         },
     })
-    console.log(data, 'getUserProfile');
+    // console.log(data, 'getUserProfile');
 
     return data
 }
@@ -21,7 +22,7 @@ export async function getUserPosts(userId: string) {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         },
     })
-    console.log(data, 'getUserPosts');
+    // console.log(data, 'getUserPosts');
 
     return data
 
@@ -34,7 +35,7 @@ export async function uploadProfilePhoto(formData: FormData) {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         },
     })
-    console.log(data, 'uploadProfilePhoto');
+    // console.log(data, 'uploadProfilePhoto');
 
     return data
 }
@@ -45,7 +46,7 @@ export async function toggleFollowUser(userId: string) {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         },
     })
-    console.log(data, 'toggleFollowUser');
+    // console.log(data, 'toggleFollowUser');
 
     return data
 }
@@ -57,8 +58,15 @@ export async function getFollowSuggestions() {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         },
     })
-    console.log(data, 'getFollowSuggestions');
+    // console.log(data, 'getFollowSuggestions');
 
     return data
 }
 
+export async function changeMyPassword(formData: ChangePasswordFormData) {
+    const {data} = await api.patch("/users/change-password", {
+        password: formData.password,
+        newPassword: formData.newPassword,
+    });
+    return data;
+}

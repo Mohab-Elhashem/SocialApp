@@ -42,8 +42,7 @@ export default function LikeButton({ postId, initialLikesCount, likes }: LikeBut
             setIsLikedLocal(nextLiked);
             setCountLocal(nextCount);
 
-            queryClient.invalidateQueries({ queryKey: ['posts'] });
-            queryClient.invalidateQueries({ queryKey: ['user-posts'] });
+            queryClient.invalidateQueries({ queryKey: ['allPosts'] });
         },
         onError: () => {
             toast.error("Failed to update like status");

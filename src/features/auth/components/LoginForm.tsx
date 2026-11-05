@@ -13,7 +13,7 @@ import { z } from "zod";
 import { login } from "@/api/auth";
 import { useContext, useState } from "react";
 import { Loader } from "lucide-react";
-import { toast } from "sonner"; 
+import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AuthContext } from "@/context/AuthContext/AuthContext";
 
@@ -21,7 +21,7 @@ const LoginSchema = z.object({
     email: z
         .string()
         .min(1, { message: "Email is required" })
-        .email({ message: "Invalid email address format" }),
+        .email({ message: "Invalid email address" }),
     password: z
         .string()
         .min(1, { message: "Password is required" }),
@@ -33,11 +33,7 @@ export default function LoginForm() {
 
     type LoginFormValues = z.infer<typeof LoginSchema>;
 
-    const {
-        handleSubmit,
-        register,
-        formState: { errors },
-    } = useForm<LoginFormValues>({
+    const { handleSubmit, register, formState: { errors }, } = useForm<LoginFormValues>({
         resolver: zodResolver(LoginSchema),
         mode: "onTouched",
     });
@@ -79,7 +75,6 @@ export default function LoginForm() {
                         </header>
 
                         <FieldGroup className="space-y-4">
-                            {/* Email */}
                             <Field>
                                 <FieldLabel htmlFor="email">Email</FieldLabel>
                                 <Input
@@ -95,7 +90,6 @@ export default function LoginForm() {
                                 )}
                             </Field>
 
-                            {/* Password */}
                             <Field>
                                 <FieldLabel htmlFor="password">Password</FieldLabel>
                                 <Input

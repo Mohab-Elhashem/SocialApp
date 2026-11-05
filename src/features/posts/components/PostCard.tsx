@@ -125,8 +125,7 @@ export default function PostCard({ post }: { post: Post }) {
                     <div className="flex items-center gap-1">
                         <BookmarkButton
                             postId={post._id}
-                            initialBookmarksCount={post.bookmarksCount} // 👈 العداد (رقم)
-                            initialIsBookmarked={post.bookmarked ?? false}   // 👈 الحالة (True أو False)
+                            initialIsBookmarked={post.bookmarked ?? false}
                         />
                         <Button variant="ghost" size="sm" className="flex items-center gap-1.5 hover:text-primary hover:bg-primary/10">
                             <Share2 className="w-4 h-4" />

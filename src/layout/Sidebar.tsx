@@ -1,4 +1,4 @@
-import { Home, Search, Bell, MessageSquare, User, PlusSquare, LogOut, User2 } from "lucide-react";
+import { Home, Search, Bell, MessageSquare, User, PlusSquare, LogOut, User2, Settings } from "lucide-react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ const navItems = [
     { title: "Explore", url: "/explore", icon: Search },
     { title: "Notifications", url: "/notifications", icon: Bell },
     { title: "Messages", url: "/messages", icon: MessageSquare },
+    { title: "Settings", url: "/settings", icon: Settings },
 ];
 
 export function AppSidebar() {
