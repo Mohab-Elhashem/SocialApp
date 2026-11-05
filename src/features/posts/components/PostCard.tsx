@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Container } from "@/components/shared/Container";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, Heart, MessageSquare, Share2, Bookmark } from "lucide-react";
+import { Ellipsis, MessageSquare, Share2 } from "lucide-react";
 import { deletePost } from "@/api/posts.api";
 import { jwtDecode } from "jwt-decode";
 import { useMutation } from "@tanstack/react-query";
@@ -27,7 +27,7 @@ export interface DecodedToken {
 
 export default function PostCard({ post }: { post: Post }) {
     const [isOpen, setIsOpen] = useState(false)
-    const { user: { name, photo, username, _id: postCreateId }, body, id: postId, image: postImage, likesCount, commentsCount, sharesCount, bookmarked } = post
+    const { user: { name, photo, username, _id: postCreateId }, body, id: postId, image: postImage, commentsCount, sharesCount, bookmarked } = post
 
     const { user: loggedUser } = jwtDecode<DecodedToken>(localStorage.getItem('token') || '');
 
