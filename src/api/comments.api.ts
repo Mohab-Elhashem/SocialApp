@@ -11,7 +11,7 @@ export async function getPostComments(postId: string, page: number , limit:numbe
             page,
         }
     })
-    // console.log(data);
+    // console.log(data,'getPostComments');
 
     return data
 }
@@ -35,7 +35,7 @@ export async function deleteComment(postId:string,commentId:string) {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         },
     })
-    console.log(data,'delete comment');
+    // console.log(data,'delete comment');
 
     return data
     
@@ -48,7 +48,7 @@ export async function updateComment(postId:string,commentId:string ,formData: Fo
             Authorization: `Bearer ${localStorage.getItem('token')}`
         },
     })
-    console.log(data,'update comment');
+    // console.log(data,'update comment');
 
     return data
     

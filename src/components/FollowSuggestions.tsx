@@ -10,16 +10,13 @@ export default function FollowSuggestions() {
     const queryClient = useQueryClient();
     const [followedIds, setFollowedIds] = useState<string[]>([]);
 
-    // 1️⃣ جلب الاقتراحات
     const { data, isLoading, isError } = useQuery({
         queryKey: ['follow-suggestions'],
         queryFn: getFollowSuggestions,
     });
 
-    // استخراج المصفوفة بناءً على الـ Root Type الجديد (data.data.suggestions)
     const suggestions = data?.data?.suggestions || [];
 
-    // 2️⃣ تفاعل المتابعة / إلغاء المتابعة
     const { mutate: handleFollow, isPending } = useMutation({
         mutationFn: (userId: string) => toggleFollowUser(userId),
         onSuccess: (_, userId) => {
@@ -73,7 +70,6 @@ export default function FollowSuggestions() {
                                     </span>
                                     <span className="text-xs text-muted-foreground truncate">
                                         {suggestion.username}
-                                        {/* يمكنك عرض الأصدقاء المشتركين لو رغبت: suggestion.mutualFollowersCount */}
                                     </span>
                                 </div>
                             </div>

@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Container } from "@/components/shared/Container";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, MessageSquare, Share2 } from "lucide-react";
 import { deletePost } from "@/api/posts.api";
@@ -26,8 +26,9 @@ export interface DecodedToken {
 
 
 export default function PostCard({ post }: { post: Post }) {
+    
     const [isOpen, setIsOpen] = useState(false)
-    const { user: { name, photo, username, _id: postCreateId }, body, id: postId, image: postImage, commentsCount, sharesCount, bookmarked } = post
+    const { user: { name, photo, username, _id: postCreateId }, body, id: postId, image: postImage, commentsCount, sharesCount } = post
 
     const { user: loggedUser } = jwtDecode<DecodedToken>(localStorage.getItem('token') || '');
 
@@ -53,46 +54,43 @@ export default function PostCard({ post }: { post: Post }) {
             <div className="bg-card text-card-foreground border border-border rounded-2xl p-4 sm:p-5 shadow-xs space-y-3 transition-all">
 
                 {/* Header */}
-                <header className="flex justify-between items-center">
-                    <div className="flex items-center gap-3">
-                        <Avatar className="w-10 h-10">
+                <header className="flex justify-between items-center gap-2">
+                    {/* بيانات المستخدم مع منع التداخل باستخدام min-w-0 و truncate */}
+                    <div className="flex items-center gap-3 min-w-0 flex-1">
+                        <Avatar className="w-10 h-10 shrink-0">
                             <AvatarImage src={photo} alt={name} />
                             <AvatarFallback>{post.user.name.slice(0, 2).toLocaleUpperCase()}</AvatarFallback>
                         </Avatar>
 
-                        <div className="flex flex-col">
-                            <div className="flex items-center gap-2">
-                                <span className="font-semibold text-sm text-foreground">{name}</span>
-                                <span className="text-xs text-muted-foreground">{username}</span>
+                        <div className="flex flex-col min-w-0 flex-1">
+                            <div className="flex items-center gap-2 min-w-0">
+                                <span className="font-semibold text-sm text-foreground truncate">{name}</span>
+                                <span className="text-xs text-muted-foreground truncate">{username}</span>
                             </div>
                             <span className="text-xs text-muted-foreground">{new Date(post.createdAt).toLocaleDateString()}</span>
                         </div>
                     </div>
 
-                    {loggedUser == postCreateId ?
-                        <DropdownMenu>
-                            <DropdownMenuTrigger
-                                render={
-                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                                        <Ellipsis className="w-4 h-4" />
-                                    </Button>
-                                }
-                            />
-                            <DropdownMenuContent align="end">
-                                <DropdownMenuItem onClick={() => setIsOpen(true)} className="cursor-pointer">
-                                    Update
-                                </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => mutate()} className="cursor-pointer text-destructive focus:text-destructive">
-                                    Delete
-                                </DropdownMenuItem>
-                            </DropdownMenuContent>
-
-
-                        </DropdownMenu>
-                        :
-                        <FollowButton targetUserId={post.user?._id || postCreateId} />
-
-                    }
+                    {/* زر المتابعة أو القائمة الجانبية مع منع انكماشه عبر shrink-0 */}
+                    <div className="shrink-0">
+                        {loggedUser == postCreateId ? (
+                            <DropdownMenu>
+                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                                    <Ellipsis className="w-4 h-4" />
+                                </Button>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => setIsOpen(true)} className="cursor-pointer">
+                                        Update
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => mutate()} className="cursor-pointer text-destructive focus:text-destructive">
+                                        Delete
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <FollowButton targetUserId={post.user?._id || postCreateId} />
+                        )}
+                    </div>
                 </header>
 
                 {/* Content */}

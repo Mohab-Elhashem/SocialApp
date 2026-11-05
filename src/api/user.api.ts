@@ -1,101 +1,6 @@
+import type { FollowSuggestionsData, FollowUserResponse, ProfileData, UserPostsData } from "@/types/user.types";
 import api from "./axios"
 
-export interface ProfileData {
-    success: boolean
-    message: string
-    data: Data
-}
-
-export interface Data {
-    user: User
-}
-
-export interface User {
-    _id: string
-    name: string
-    username: string
-    email: string
-    dateOfBirth: string
-    gender: string
-    photo: string
-    cover: string
-    bookmarks: unknown[]
-    followers: unknown[]
-    following: unknown[]
-    createdAt: string
-    followersCount: number
-    followingCount: number
-    bookmarksCount: number
-    id: string
-}
-
-// getUserPosts types
-export interface UserPostsData {
-    success: boolean
-    message: string
-    data: Data
-    meta: Meta
-}
-
-export interface Data {
-    posts: unknown[]
-}
-
-export interface Meta {
-    pagination: Pagination
-}
-
-export interface Pagination {
-    currentPage: number
-    numberOfPages: number
-    limit: number
-    total: number
-}
-
-// getFollowSuggestions
-export interface FollowSuggestionsData {
-    success: boolean
-    message: string
-    data: Data
-    meta: Meta
-}
-
-export interface Data {
-    suggestions: Suggestion[]
-}
-
-export interface Suggestion {
-    _id: string
-    name: string
-    username: string
-    photo: string
-    mutualFollowersCount: number
-    followersCount: number
-}
-
-export interface Meta {
-    pagination: Pagination
-}
-
-export interface Pagination {
-    currentPage: number
-    limit: number
-    total: number
-    numberOfPages: number
-    nextPage: number
-}
-
-// toggleFollowUser
-export interface FollowUser {
-    success: boolean
-    message: string
-    data: Data
-}
-
-export interface Data {
-    following: boolean
-    followersCount: number
-}
 
 
 export async function getUserProfile() {
@@ -135,7 +40,7 @@ export async function uploadProfilePhoto(formData: FormData) {
 }
 
 export async function toggleFollowUser(userId: string) {
-    const { data } = await api.put<FollowUser>(`/users/${userId}/follow`, {}, {
+    const { data } = await api.put<FollowUserResponse>(`/users/${userId}/follow`, {}, {
         headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
         },

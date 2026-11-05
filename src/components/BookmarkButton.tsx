@@ -8,7 +8,7 @@ import { toast } from "sonner";
 interface BookmarkButtonProps {
     postId: string;
     initialBookmarksCount?: number;
-    initialIsBookmarked?: boolean; // 👈 أضفناها لتحديد هل البوست محفوظ مسبقاً أم لا
+    initialIsBookmarked?: boolean;
 }
 
 export function BookmarkButton({ 
@@ -18,15 +18,12 @@ export function BookmarkButton({
 }: BookmarkButtonProps) {
     const queryClient = useQueryClient();
 
-    // حالات محلية لتحديث الواجهة فورياً عند الضغط (Instant UI Feedback)
     const [isBookmarkedLocal, setIsBookmarkedLocal] = useState<boolean | null>(null);
     const [countLocal, setCountLocal] = useState<number | null>(null);
 
-    // ✅ التصحيح هنا: استخدام boolean للحالة و number للعدادات بشكل سليم
     const isBookmarked = isBookmarkedLocal !== null ? isBookmarkedLocal : initialIsBookmarked;
     const bookmarksCount = countLocal !== null ? countLocal : initialBookmarksCount;
 
-    // استخدام useMutation لإرسال طلب الـ Bookmark / Unbookmark
     const { mutate: handleBookmark, isPending } = useMutation({
         mutationFn: () => toggleBookmarkPost(postId),
         onSuccess: (response) => {
@@ -39,7 +36,6 @@ export function BookmarkButton({
             setIsBookmarkedLocal(nextBookmarked);
             setCountLocal(nextCount);
 
-            // تحديث الكاش لتظل البيانات مزامنة في كل التطبيق والبروفايل
             queryClient.invalidateQueries({ queryKey: ['posts'] });
             queryClient.invalidateQueries({ queryKey: ['user-posts'] });
             queryClient.invalidateQueries({ queryKey: ['my-profile'] });

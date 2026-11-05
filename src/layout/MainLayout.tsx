@@ -3,7 +3,6 @@ import { AppSidebar } from "./Sidebar";
 import { Outlet } from "react-router-dom";
 import { Languages, Moon, Sun } from "lucide-react";
 import { useTheme } from "@/hooks/useTheme";
-import FollowSuggestions from "@/components/FollowSuggestions";
 
 export default function MainLayout() {
     const isLogin = localStorage.getItem('token');
@@ -40,14 +39,10 @@ export default function MainLayout() {
 
                 {/* Main Content Area with Right Sidebar */}
                 <main className="flex-1 p-4 md:p-6 overflow-y-auto">
-                    <div className="max-w-7xl mx-auto flex gap-6">
-                        <div className="flex-1 min-w-0">
+                    <div className="max-w-7xl mx-auto flex gap-6 ">
+                        <div className="flex-1 min-w-0 ">
                             <Outlet />
                         </div>
-
-                        <aside className="hidden lg:block w-80 shrink-0 space-y-4 sticky top-6">
-                            <FollowSuggestions />
-                        </aside>
                     </div>
                 </main>
             </div>

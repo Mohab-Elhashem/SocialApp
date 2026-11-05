@@ -1,4 +1,4 @@
-import type { AllPostsResponse, SinglePostResponse } from "@/types/post.types";
+import type { AllPostsResponse, BookmarkPostData, LikePostData, SinglePostResponse } from "@/types/post.types";
 import api from "./axios";
 
 
@@ -63,55 +63,6 @@ export async function getSinglePost(postId: string) {
     console.log(data, 'single post');
     return data
 }
-
-export interface LikePostData {
-    success: boolean
-    message: string
-    data: Data
-}
-
-export interface Data {
-    liked: boolean
-    likesCount: number
-    post: Post
-}
-
-export interface Post {
-    _id: string
-    body: string
-    privacy: string
-    user: User
-    sharedPost: unknown
-    likes: string[]
-    createdAt: string
-    likesCount: number
-    isShare: boolean
-    id: string
-}
-
-export interface User {
-    _id: string
-    name: string
-    username: string
-    photo: string
-    followersCount: number
-    followingCount: number
-    bookmarksCount: number
-    id: string
-}
-
-// toggleBookmarkPost
-export interface BookmarkPostData {
-    success: boolean
-    message: string
-    data: Data
-}
-
-export interface Data {
-    bookmarked: boolean
-    bookmarksCount: number
-}
-
 
 export async function toggleLikePost(postId: string) {
     const { data } = await api.put<LikePostData>(`/posts/${postId}/like`, {}, {

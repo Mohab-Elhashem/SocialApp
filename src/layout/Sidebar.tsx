@@ -27,7 +27,6 @@ export function AppSidebar() {
 
     return <>
         {isLogin && <Sidebar collapsible="icon">
-            {/* 1. Header / Logo */}
             <SidebarHeader className="p-3 border-b border-sidebar-border">
                 <div className="flex items-center gap-3 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
                     <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground font-bold">
@@ -39,7 +38,6 @@ export function AppSidebar() {
                 </div>
             </SidebarHeader>
 
-            {/* 2. Navigation Content */}
             <SidebarContent>
                 <SidebarGroup>
                     <SidebarGroupContent>
@@ -74,7 +72,6 @@ export function AppSidebar() {
                 </div>
             </SidebarContent>
 
-            {/* 3. User Profile / Footer */}
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>

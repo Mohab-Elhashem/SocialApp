@@ -1,9 +1,12 @@
-
 export interface User {
     _id: string
     name: string
     username: string
     photo: string
+    followersCount?: number
+    followingCount?: number
+    bookmarksCount?: number
+    id?: string
 }
 
 export interface Post {
@@ -16,12 +19,12 @@ export interface Post {
     sharedPost?: SharedPost | null
     likes: string[]
     createdAt: string
-    commentsCount: number
+    commentsCount?: number
     topComment?: TopComment | null
-    sharesCount: number
+    sharesCount?: number
     likesCount: number
     isShare: boolean
-    bookmarked: boolean
+    bookmarked?: boolean
 }
 
 export interface SharedPost {
@@ -77,5 +80,24 @@ export interface SinglePostResponse {
     message: string
     data: {
         post: Post
+    }
+}
+
+export interface LikePostData {
+    success: boolean
+    message: string
+    data: {
+        liked: boolean
+        likesCount: number
+        post: Post
+    }
+}
+
+export interface BookmarkPostData {
+    success: boolean
+    message: string
+    data: {
+        bookmarked: boolean
+        bookmarksCount: number
     }
 }

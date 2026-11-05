@@ -8,13 +8,11 @@ interface FollowButtonProps {
     targetUserId: string;
 }
 
-// تعريف نوع العنصر بدقة
 type FollowingItem = string | { _id?: string };
 
 export function FollowButton({ targetUserId }: FollowButtonProps) {
     const queryClient = useQueryClient();
 
-    // 1️⃣ جلب بيانات المستخدم الحالي
     const { data: profileData } = useQuery({
         queryKey: ['my-profile'],
         queryFn: getUserProfile,
@@ -39,7 +37,6 @@ export function FollowButton({ targetUserId }: FollowButtonProps) {
         return null;
     }
 
-    // 2️⃣ عمل Type Casting بأمان تام لحل مشكلة unknown[]
     const followingList: FollowingItem[] = (currentUser?.following || []) as FollowingItem[];
     
     const isFollowing = followingList.some((item: FollowingItem) => 

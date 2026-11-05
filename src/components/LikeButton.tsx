@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { toggleLikePost } from "@/api/posts.api"; // أو مسار ملف الـ API الخاص بالبوستات لديك
+import { toggleLikePost } from "@/api/posts.api";
 import { getUserProfile } from "@/api/user.api";
 import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
@@ -9,13 +9,12 @@ import { toast } from "sonner";
 interface LikeButtonProps {
     postId: string;
     initialLikesCount: number;
-    likes: string[]; // مصفوفة الـ IDs للأشخاص الذين أُعجبوا بالبوست
+    likes: string[];
 }
 
 export default function LikeButton({ postId, initialLikesCount, likes }: LikeButtonProps) {
     const queryClient = useQueryClient();
 
-    // 1️⃣ جلب بيانات المستخدم الحالي لمعرفة ما إذا كان قد أبدى إعجابه مسبقاً
     const { data: profileData } = useQuery({
         queryKey: ['my-profile'],
         queryFn: getUserProfile,
@@ -23,21 +22,17 @@ export default function LikeButton({ postId, initialLikesCount, likes }: LikeBut
 
     const currentUserId = profileData?.data?.user?._id;
 
-    // التحقق هل الـ ID الخاص بي موجود داخل مصفوفة الـ likes للبوست
     const isInitiallyLiked = currentUserId ? likes.includes(currentUserId) : false;
 
-    // حالات محلية لتحديث الواجهة فورياً (Instant UI Feedback)
     const [isLikedLocal, setIsLikedLocal] = useState<boolean | null>(null);
     const [countLocal, setCountLocal] = useState<number | null>(null);
 
     const isLiked = isLikedLocal !== null ? isLikedLocal : isInitiallyLiked;
     const likesCount = countLocal !== null ? countLocal : initialLikesCount;
 
-    // 2️⃣ استخدام useMutation لإرسال طلب الـ Like / Unlike
     const { mutate: handleLike, isPending } = useMutation({
         mutationFn: () => toggleLikePost(postId),
         onSuccess: (response) => {
-            // الباك إند غالباً يُرجع الحالة الجديدة والعدد الجديد في الـ response
             const serverLiked = response?.data?.liked;
             const serverCount = response?.data?.likesCount;
 
@@ -47,7 +42,6 @@ export default function LikeButton({ postId, initialLikesCount, likes }: LikeBut
             setIsLikedLocal(nextLiked);
             setCountLocal(nextCount);
 
-            // تحديث الكاش لتظل البيانات مزامنة في كل التطبيق
             queryClient.invalidateQueries({ queryKey: ['posts'] });
             queryClient.invalidateQueries({ queryKey: ['user-posts'] });
         },
