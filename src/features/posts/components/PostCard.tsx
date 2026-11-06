@@ -1,6 +1,6 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Container } from "@/components/shared/Container";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Ellipsis, MessageSquare, Share2 } from "lucide-react";
 import { deletePost } from "@/api/posts.api";
@@ -26,7 +26,7 @@ export interface DecodedToken {
 
 
 export default function PostCard({ post }: { post: Post }) {
-    
+
     const [isOpen, setIsOpen] = useState(false)
     const { user: { name, photo, username, _id: postCreateId }, body, id: postId, image: postImage, commentsCount, sharesCount } = post
 
@@ -55,7 +55,6 @@ export default function PostCard({ post }: { post: Post }) {
 
                 {/* Header */}
                 <header className="flex justify-between items-center gap-2">
-                    {/* بيانات المستخدم مع منع التداخل باستخدام min-w-0 و truncate */}
                     <div className="flex items-center gap-3 min-w-0 flex-1">
                         <Avatar className="w-10 h-10 shrink-0">
                             <AvatarImage src={photo} alt={name} />
@@ -71,13 +70,13 @@ export default function PostCard({ post }: { post: Post }) {
                         </div>
                     </div>
 
-                    {/* زر المتابعة أو القائمة الجانبية مع منع انكماشه عبر shrink-0 */}
                     <div className="shrink-0">
                         {loggedUser == postCreateId ? (
                             <DropdownMenu>
-                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
+                                <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-accent transition-colors">
                                     <Ellipsis className="w-4 h-4" />
-                                </Button>
+                                </DropdownMenuTrigger>
+
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => setIsOpen(true)} className="cursor-pointer">
                                         Update
