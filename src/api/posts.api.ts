@@ -8,10 +8,10 @@ export async function getAllPosts(page: number) {
         params: {
             limit: 10,
             page,
-            sort: 'createdAt'
+            // sort: 'createdAt'
         }
     })
-    console.log(data, 'getAllPosts');
+    // console.log(data, 'getAllPosts');
 
     return data
 }
@@ -41,18 +41,18 @@ export async function updatePost(postId: string, formData: FormData) {
 
 export async function getSinglePost(postId: string) {
     const { data } = await api.get<SinglePostResponse>(`/posts/${postId}`)
-    console.log(data, 'single post');
+    // console.log(data, 'single post');
     return data
 }
 
 export async function toggleLikePost(postId: string) {
     const { data } = await api.put<LikePostData>(`/posts/${postId}/like`, {})
-    console.log(data, 'toggleLikePost');
+    // console.log(data, 'toggleLikePost');
     return data
 }
 
 export async function toggleBookmarkPost(postId: string) {
     const { data } = await api.put<BookmarkPostData>(`/posts/${postId}/bookmark`, {})
-    console.log(data, 'toggleBookmarkPost');
+    // console.log(data, 'toggleBookmarkPost');
     return data
 }
