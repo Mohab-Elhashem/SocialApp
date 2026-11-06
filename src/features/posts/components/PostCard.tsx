@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Container } from "@/components/shared/Container";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Ellipsis, MessageSquare, Share2 } from "lucide-react";
+import { Ellipsis, MessageSquare } from "lucide-react";
 import { deletePost } from "@/api/posts.api";
 import { jwtDecode } from "jwt-decode";
 import { useMutation } from "@tanstack/react-query";
@@ -15,6 +15,7 @@ import type { Post } from "@/types/post.types";
 import { FollowButton } from "@/components/FollowButton";
 import LikeButton from "@/components/LikeButton";
 import { BookmarkButton } from "@/components/BookmarkButton";
+import ShareButton from "./ShareButton";
 
 export interface DecodedToken {
     user: string
@@ -28,7 +29,7 @@ export interface DecodedToken {
 export default function PostCard({ post }: { post: Post }) {
 
     const [isOpen, setIsOpen] = useState(false)
-    const { user: { name, photo, username, _id: postCreateId }, body, id: postId, image: postImage, commentsCount, sharesCount } = post
+    const { user: { name, photo, username, _id: postCreateId }, body, id: postId, image: postImage, commentsCount } = post
 
     const { user: loggedUser } = jwtDecode<DecodedToken>(localStorage.getItem('token') || '');
 
@@ -126,10 +127,10 @@ export default function PostCard({ post }: { post: Post }) {
                             postId={post._id}
                             initialIsBookmarked={post.bookmarked ?? false}
                         />
-                        <Button variant="ghost" size="sm" className="flex items-center gap-1.5 hover:text-primary hover:bg-primary/10">
-                            <Share2 className="w-4 h-4" />
-                            <span className="text-xs font-medium">{sharesCount}</span>
-                        </Button>
+                        <ShareButton
+                            postId={post._id}
+                            sharesCount={post.sharesCount}
+                        />
                     </div>
                 </footer>
             </div>
