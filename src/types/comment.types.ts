@@ -40,3 +40,21 @@ export interface Pagination {
     total: number;
     numberOfPages: number;
 }
+
+export interface CommentItemProps {
+    comment: Comment;
+    postId: string;
+    loggedInUserId: string | null;
+    onDelete: (commentId: string) => void;
+    onEdit: (comment: Comment) => void;
+}
+
+export interface RepliesResponse {
+    success?: boolean;
+    message?: string;
+    data?: {
+        replies?: Comment[];
+        reply?: Comment;
+    };
+    comments?: Comment[];
+}

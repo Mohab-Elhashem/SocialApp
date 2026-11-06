@@ -49,11 +49,21 @@ export async function toggleCommentLike(postId: string, commentId: string) {
 }
 
 
-export async function replyToComment(postId: string, commentId: string, formData: FormData) {
-    const { data } = await api.post(`/posts/${postId}/comments/${commentId}/replies`, formData)
-    // console.log(data,'reply ToComment');
+export async function getCommentReplies(postId: string, commentId: string, page: number, limit: number) {
+    const { data } = await api.get(`/posts/${postId}/comments/${commentId}/replies`, {
+        params: {
+            page,
+            limit
+        }
+    });
+    // console.log(data,'getComment Replies');
+    return data;
+}
 
-    return data
 
+export async function addReply(postId: string, commentId: string, content: string) {
+    const { data } = await api.post(`/posts/${postId}/comments/${commentId}/replies`, { content });
+    // console.log(data,'add Reply');
+    return data;
 }
 

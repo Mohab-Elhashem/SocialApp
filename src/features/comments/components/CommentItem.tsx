@@ -1,35 +1,33 @@
-import { toggleCommentLike, replyToComment, deleteComment } from "@/api/comments.api";
+import { toggleCommentLike, deleteComment, getCommentReplies, addReply } from "@/api/comments.api";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Ellipsis, Heart, MessageSquare, Loader2, Send, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import type { Comment } from "@/types/comment.types";
+import type { Comment, CommentItemProps, RepliesResponse } from "@/types/comment.types";
 
-interface CommentItemProps {
-    comment: Comment;
-    postId: string;
-    loggedInUserId: string | null;
-    onDelete: (commentId: string) => void;
-    onEdit: (comment: Comment) => void;
-}
 
 export default function CommentItem({ comment, postId, loggedInUserId, onDelete, onEdit }: CommentItemProps) {
     const queryClient = useQueryClient();
-    const [isReplying, setIsReplying] = useState(false);
-    const [replyContent, setReplyContent] = useState("");
+    const [isReplying, setIsReplying] = useState<boolean>(false);
+    const [replyContent, setReplyContent] = useState<string>("");
     
-    const [localReplies, setLocalReplies] = useState<Comment[]>(comment?.replies || []);
-
     const { _id: commentId, content, image, commentCreator, likes, createdAt } = comment;
     const name = commentCreator?.name;
     const photo = commentCreator?.photo;
     const commentCreatorId = commentCreator?._id;
 
-    const { mutate: handleLike, isPending: isLiking } = useMutation({
+    const { data: repliesData } = useQuery<RepliesResponse>({
+        queryKey: ['replies', commentId],
+        queryFn: () => getCommentReplies(postId, commentId, 1, 10),
+    });
+
+    const replies: Comment[] = repliesData?.data?.replies || comment?.replies || [];
+
+    const { mutate: handleLike, isPending: isLiking } = useMutation<void, Error, void>({
         mutationFn: () => toggleCommentLike(postId, commentId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['comments', postId] });
@@ -39,38 +37,58 @@ export default function CommentItem({ comment, postId, loggedInUserId, onDelete,
         }
     });
 
-    const { mutate: handleReply, isPending: isSendingReply } = useMutation({
-        mutationFn: () => {
-            const formData = new FormData();
-            formData.append("content", replyContent);
-            return replyToComment(postId, commentId, formData);
-        },
+    const { mutate: handleReply, isPending: isSendingReply } = useMutation<RepliesResponse, Error, void>({
+        mutationFn: () => addReply(postId, commentId, replyContent),
         onSuccess: (response) => {
             toast.success("Reply added successfully! 💬");
             const newReply = response?.data?.reply;
+            
             if (newReply) {
-                setLocalReplies((prev) => [...prev, newReply]);
+                queryClient.setQueryData<RepliesResponse>(['replies', commentId], (oldData) => {
+                    const currentReplies = oldData?.data?.replies || comment?.replies || [];
+                    return {
+                        ...oldData,
+                        data: {
+                            ...oldData?.data,
+                            replies: [newReply, ...currentReplies]
+                        }
+                    };
+                });
             }
+            
             setReplyContent("");
             setIsReplying(false);
+            queryClient.invalidateQueries({ queryKey: ['replies', commentId] });
         },
         onError: () => {
             toast.error("Failed to send reply");
         }
     });
 
-    const { mutate: handleDeleteReply } = useMutation({
+    const { mutate: handleDeleteReply } = useMutation<void, Error, string>({
         mutationFn: (replyId: string) => deleteComment(postId, replyId),
         onSuccess: (_, replyId) => {
             toast.success("Reply deleted successfully! 🗑️");
-            setLocalReplies((prev) => prev.filter((reply) => reply._id !== replyId));
+            
+            queryClient.setQueryData<RepliesResponse>(['replies', commentId], (oldData) => {
+                const currentReplies = oldData?.data?.replies || comment?.replies || [];
+                return {
+                    ...oldData,
+                    data: {
+                        ...oldData?.data,
+                        replies: currentReplies.filter((reply) => reply._id !== replyId)
+                    }
+                };
+            });
+
+            queryClient.invalidateQueries({ queryKey: ['replies', commentId] });
         },
         onError: () => {
             toast.error("Failed to delete reply");
         }
     });
 
-    const isLikedByMe = loggedInUserId ? likes?.includes(loggedInUserId) : false;
+    const isLikedByMe = loggedInUserId && likes ? likes.includes(loggedInUserId) : false;
 
     return (
         <div className="rounded-xl border border-border/60 bg-card p-4 shadow-sm space-y-3">
@@ -90,9 +108,9 @@ export default function CommentItem({ comment, postId, loggedInUserId, onDelete,
 
                 {commentCreatorId === loggedInUserId && (
                     <DropdownMenu>
-                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
-                                <Ellipsis className="w-4 h-4" />
-                            </Button>
+                        <DropdownMenuTrigger className="h-8 w-8 inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring text-muted-foreground cursor-pointer">
+                            <Ellipsis className="w-4 h-4" />
+                        </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                             <DropdownMenuItem onClick={() => onEdit(comment)} className="cursor-pointer">
                                 Update
@@ -154,7 +172,7 @@ export default function CommentItem({ comment, postId, loggedInUserId, onDelete,
                     />
                     <Button 
                         size="sm" 
-                        className="h-8 px-3 text-xs gap-1"
+                        className="h-8 px-3 text-xs gap-1 cursor-pointer"
                         disabled={isSendingReply || !replyContent.trim()}
                         onClick={() => handleReply()}
                     >
@@ -164,9 +182,9 @@ export default function CommentItem({ comment, postId, loggedInUserId, onDelete,
                 </div>
             )}
 
-            {localReplies && localReplies.length > 0 && (
+            {replies && replies.length > 0 && (
                 <div className="pl-12 pt-3 space-y-2.5 border-l-2 border-border/40 ml-4">
-                    {localReplies.map((reply) => {
+                    {replies.map((reply: Comment) => {
                         const isReplyOwner = reply?.commentCreator?._id === loggedInUserId;
                         
                         return (
