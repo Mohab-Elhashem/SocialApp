@@ -16,7 +16,7 @@ function getLoggedInUserId() {
     if (!token) return null;
     try {
         const decoded: DecodedToken = jwtDecode(token);
-        return decoded.user?._id || decoded.user || null;
+        return  decoded.user || null;
     } catch {
         return null;
     }
