@@ -59,6 +59,6 @@ export async function toggleBookmarkPost(postId: string) {
 
 export async function sharePost(postId: string){
     const {data} = await api.post(`/posts/${postId}/share`)
-    console.log(data,'share Post');
+    // console.log(data,'share Post');
     return data
 }

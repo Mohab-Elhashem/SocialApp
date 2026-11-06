@@ -41,6 +41,7 @@ export interface SharedPost {
     sharesCount: number
     likesCount: number
     isShare: boolean
+    image?: string;
 }
 
 export interface TopComment {

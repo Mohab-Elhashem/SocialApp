@@ -12,7 +12,7 @@ interface ShareButtonProps {
 
 export default function ShareButton({ postId, sharesCount = 0 }: ShareButtonProps) {
     const queryClient = useQueryClient();
-    const [optimisticDelta, setOptimisticDelta] = useState(0);
+    const [optimisticDelta, setOptimisticDelta] = useState<number>(0);
 
     const displayCount = sharesCount + optimisticDelta;
 
@@ -26,13 +26,6 @@ export default function ShareButton({ postId, sharesCount = 0 }: ShareButtonProp
         onSuccess: () => {
             toast.success("Post shared successfully! 🚀");
             queryClient.invalidateQueries({ queryKey: ['posts'] });
-        },
-        
-        onError: (error) => {
-            const status = error.message            
-            if (status === 'Request failed with status code 409') {
-                toast.info("You have already shared this post!");
-            }
         },
         
         onSettled: () => {
