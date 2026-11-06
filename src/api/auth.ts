@@ -4,7 +4,7 @@ import api from "./axios"
 
 export async function signup(regData: regDataRequest) {
     const {data} = await api.post<authResponse>('/users/signup', regData) 
-    // console.log(data,'signup');
+    // console.log(data,'register');
 
     return data
 }
