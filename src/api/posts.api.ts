@@ -1,4 +1,4 @@
-import type { AllPostsResponse, BookmarkPostData, LikePostData, SinglePostResponse } from "@/types/post.types";
+import type { AllPostsResponse, BookmarkPostData, LikePostData, PostLikesResponse, SinglePostResponse } from "@/types/post.types";
 import api from "./axios";
 
 
@@ -57,8 +57,19 @@ export async function toggleBookmarkPost(postId: string) {
     return data
 }
 
-export async function sharePost(postId: string){
-    const {data} = await api.post(`/posts/${postId}/share`)
+export async function sharePost(postId: string) {
+    const { data } = await api.post(`/posts/${postId}/share`)
     // console.log(data,'share Post');
+    return data
+}
+
+export async function getPostLikes(postId: string, page: number, limit: number) {
+    const { data } = await api.get<PostLikesResponse>(`/posts/${postId}/likes`, {
+        params: {
+            page,
+            limit,
+        }
+    })
+    // console.log(data,'get PostLikes');
     return data
 }

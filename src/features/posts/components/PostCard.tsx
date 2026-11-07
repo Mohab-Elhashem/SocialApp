@@ -16,6 +16,7 @@ import { FollowButton } from "@/components/FollowButton";
 import LikeButton from "@/components/LikeButton";
 import { BookmarkButton } from "@/components/BookmarkButton";
 import ShareButton from "./ShareButton";
+import PostLikesModal from "./PostLikesModal";
 
 export interface DecodedToken {
     user: string;
@@ -27,7 +28,7 @@ export interface DecodedToken {
 
 export default function PostCard({ post }: { post: Post }) {
     const [isOpen, setIsOpen] = useState(false);
-    
+
     const { user, body, id: postId, image: postImage, commentsCount, sharedPost, isShare } = post;
     const name = user?.name;
     const photo = user?.photo;
@@ -150,11 +151,10 @@ export default function PostCard({ post }: { post: Post }) {
                 {/* Footer Actions */}
                 <footer className="flex items-center justify-between pt-2 border-t border-border/50 text-muted-foreground">
                     <div className="flex items-center gap-1">
-                        <LikeButton
-                            postId={post._id}
-                            initialLikesCount={post.likesCount}
-                            likes={post.likes}
-                        />
+                        <div className="flex items-center gap-1">
+                            <LikeButton postId={post._id} likes={post.likes} />
+                            <PostLikesModal postId={post._id} likesCount={post.likesCount} />
+                        </div>
                         <Link to={`/comments/${postId}`}>
                             <Button variant="ghost" size="sm" className="flex items-center gap-1.5 hover:text-primary hover:bg-primary/10 cursor-pointer">
                                 <MessageSquare className="w-4 h-4" />

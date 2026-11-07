@@ -102,3 +102,27 @@ export interface BookmarkPostData {
         bookmarksCount: number
     }
 }
+
+export interface LikedUser {
+    _id: string;
+    id?: string;
+    name: string;
+    username: string;
+    photo: string;
+}
+
+export interface PostLikesResponse {
+    success: boolean;
+    message: string;
+    data: {
+        likes: LikedUser[];
+    };
+    meta: {
+        pagination: {
+            currentPage: number;
+            limit: number;
+            total: number;
+            numberOfPages: number;
+        };
+    };
+}

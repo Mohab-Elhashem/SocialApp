@@ -15,6 +15,8 @@ import { getUserProfile, getUserPosts, uploadProfilePhoto } from "@/api/user.api
 import { toast } from "sonner";
 import type { Post } from "@/types/post.types";
 import { Link } from "react-router-dom";
+import PostLikesModal from "@/features/posts/components/PostLikesModal";
+import LikeButton from "@/components/LikeButton";
 
 
 export default function ProfilePage() {
@@ -212,10 +214,13 @@ export default function ProfilePage() {
                                     )}
 
                                     <div className="flex items-center gap-6 pt-2 pl-13 text-muted-foreground text-xs sm:text-sm">
-                                        <button className="flex items-center gap-1.5 hover:text-red-500 transition-colors">
-                                            <Heart className="w-4 h-4" />
-                                            <span>{post.likesCount || post.likes?.length || 0}</span>
-                                        </button>
+                                        <div className="flex items-center gap-1.5 hover:text-red-500 transition-colors">
+                                            <LikeButton postId={post._id} likes={post.likes} />
+                                            <PostLikesModal
+                                                postId={post._id}
+                                                likesCount={post.likesCount || post.likes?.length || 0}
+                                            />
+                                        </div>
                                         <Link to={`/comments/${post._id}`}>
                                             <button className="flex items-center gap-1.5 hover:text-primary transition-colors">
                                                 <MessageCircle className="w-4 h-4" />
