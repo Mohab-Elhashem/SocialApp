@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
 import {
     Calendar,
-    Heart,
     MessageCircle,
     Share2,
     Edit3,
